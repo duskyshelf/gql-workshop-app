@@ -37,6 +37,8 @@ class Movie extends Component {
 
     if (loading) return null;
 
+
+
     return (
       <div className="backgroundContainer" style={{ backgroundImage: `url(${backdropPath})` }}>
         >
@@ -68,21 +70,32 @@ class Movie extends Component {
  *   - Extract props from data
  */
 
-const withData = withProps(() => ({
-  movie: {
-    id: "284054",
-    title: "Black Panther",
-    posterPath: "https://image.tmdb.org/t/p/w500/bLBUCtMQGJclH36clliPLmljMys.jpg",
-    backdropPath: "https://image.tmdb.org/t/p/w1280/b6ZJZHUdMEFECvGiDpJjlfUWela.jpg",
-    tagline: "Long live the king",
-    overview: "After the events of Captain America: Civil War, King T'Challa returns home to the reclusive, technologically advanced African nation of Wakanda to serve as his country's new leader. However, T'Challa soon finds that he is challenged for the throne from factions within his own country. When two foes conspire to destroy Wakanda, the hero known as Black Panther must team up with C.I.A. agent Everett K. Ross and members of the Dora Milaje, Wakandan special forces, to prevent Wakanda from being dragged into a world war.",
-    releaseDate: "2018-02-13",
-    runtime: 134,
-    revenue: 704000422,
-    voteAverage: 7.4,
-    isFavorite: false
-  },
-  loading: false
-}))
+const withData = graphql(
+  gql`
+    query Movie($movieId: ID!) {
+      movie(id: $movieId) {
+        id
+        title
+        posterPath(size: MEDIUM)
+        backdropPath
+        tagline
+        overview
+        releaseDate
+        runtime
+        revenue
+        voteAverage
+        isFavorite
+      }
+    }
+  `,
+  {
+    props: ({ data: { movie, loading } }) => ({ movie, loading }),
+    options: ownProps => ({
+      variables: {
+        movieId: ownProps.match.params.id
+      }
+    })
+  }
+)
 
 export default withData(Movie);

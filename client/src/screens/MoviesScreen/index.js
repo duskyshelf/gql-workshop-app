@@ -15,8 +15,8 @@ const FavCount = ({ count }) => {
   </div>
 }
 
-const Movies = ({ movies, favorites, loading, loadMore }) => {
-  if (loading) return null;
+const Movies = ({ movies, favorites = [], loading, loadMore }) => {
+  if (loading) return null
 
   return (
     <div className="moviesScreen">
@@ -43,28 +43,73 @@ const Movies = ({ movies, favorites, loading, loadMore }) => {
  *   - Add pagination using FetchMore
  */
 
-const withData = withProps(() => ({
-  movies: [{
-    "id": "269149",
-    "title": "Zootopia",
-    "posterPath": "https://image.tmdb.org/t/p/w500/sM33SANp9z6rXW8Itn7NnG1GOEs.jpg",
-    "releaseDate": "2016-02-11",
-    "overview": "Determined to prove herself, Officer Judy Hopps, the first bunny on Zootopia's police force, jumps at the chance to crack her first case - even if it means partnering with scam-artist fox Nick Wilde to solve the mystery.",
-    "isFavorite": true
-  },
+export const MOVIES_QUERY = gql`
+  query Movies($page: Int) {
+    movies(page: $page) @connection(key: "MOVIES") {
+      id
+      ...MovieCard
+    }
+    favorites {
+      id
+    }
+  }
+  ${MovieCard.fragment}
+`
+
+const withData = graphql(MOVIES_QUERY,
   {
-    "id": "284054",
-    "title": "Black Panther",
-    "posterPath": "https://image.tmdb.org/t/p/w500/bLBUCtMQGJclH36clliPLmljMys.jpg",
-    "releaseDate": "2018-02-13",
-    "overview": "After the events of Captain America: Civil War, King T'Challa returns home to the reclusive, technologically advanced African nation of Wakanda to serve as his country's new leader. However, T'Challa soon finds that he is challenged for the throne from factions within his own country. When two foes conspire to destroy Wakanda, the hero known as Black Panther must team up with C.I.A. agent Everett K.",
-    "isFavorite": false
-  }],
-  favorites: [{
-    "id": "269149",
-    "isFavorite": true
-  }],
-  loading: false
-}));
+    props: ({ data: { movies, favorites, loading, fetchMore } }) =>
+      ({
+        movies,
+        loading,
+        favorites,
+        loadMore: () => {
+          /* determine the next page int */
+          const nextPage = Math.floor(movies.length / 20) + 1;
+
+          return fetchMore({
+            variables: {
+              page: nextPage
+            },
+            updateQuery: (previous, { fetchMoreResult }) => {
+              if (!previous) return previous;
+
+              return {
+                ...previous,
+                movies: [
+                  ...previous.movies,
+                  ...fetchMoreResult.movies
+                ]
+              };
+            }
+          });
+        }
+      })
+  }
+);
+
+// const withData = withProps(() => ({
+//   movies: [{
+//     "id": "269149",
+//     "title": "Zootopia",
+//     "posterPath": "https://image.tmdb.org/t/p/w500/sM33SANp9z6rXW8Itn7NnG1GOEs.jpg",
+//     "releaseDate": "2016-02-11",
+//     "overview": "Determined to prove herself, Officer Judy Hopps, the first bunny on Zootopia's police force, jumps at the chance to crack her first case - even if it means partnering with scam-artist fox Nick Wilde to solve the mystery.",
+//     "isFavorite": true
+//   },
+//   {
+//     "id": "284054",
+//     "title": "Black Panther",
+//     "posterPath": "https://image.tmdb.org/t/p/w500/bLBUCtMQGJclH36clliPLmljMys.jpg",
+//     "releaseDate": "2018-02-13",
+//     "overview": "After the events of Captain America: Civil War, King T'Challa returns home to the reclusive, technologically advanced African nation of Wakanda to serve as his country's new leader. However, T'Challa soon finds that he is challenged for the throne from factions within his own country. When two foes conspire to destroy Wakanda, the hero known as Black Panther must team up with C.I.A. agent Everett K.",
+//     "isFavorite": false
+//   }],
+//   favorites: [{
+//     "id": "269149",
+//     "isFavorite": true
+//   }],
+//   loading: false
+// }));
 
 export default withData(Movies);

@@ -6,6 +6,7 @@ import client from './apollo';
 import Login from './components/Login';
 import MovieScreen from './screens/MovieScreen';
 import MoviesScreen from './screens/MoviesScreen';
+import Favorites from './screens/Favorites';
 
 class App extends Component {
   render() {
@@ -17,6 +18,7 @@ class App extends Component {
             <Switch>
               <Route exact path="/" component={MoviesScreen} />
               <Route path="/movie/:id" component={MovieScreen} />
+              <Route path="/favorites" component={Favorites} />
             </Switch>
           </Router>
         </div>

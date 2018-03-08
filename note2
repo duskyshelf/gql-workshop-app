@@ -1,0 +1,59 @@
+Graphql is just a specification
+ql = query language :O
+
+instead of requesting specific resources we can request on a more granular level
+(down to individual fields)
+
+Apollo -> graphql-tools
+Apollo launchpad? https://launchpad.graphql.com/
+
+https://gql-workshop.kitten.sh/#/
+
+SDL - schema definition language
+
+Query type -> starting point in graph (contrived)
+
+Query: (root, args, context) {}
+
+axios => fetcher // camelCaseRecursive is nice
+
+merge-graphql-schemas (example for the resolver munger)
+
+https://github.com/facebook/dataloader // reducing queries
+
+Why Apollo Client?
+  - caching
+  - normalisation
+  - fetch logic
+  - subscriptions
+  - optimistic UI // can fire mutations and assume they worked
+  - declaritive data fetching // mapping props etc
+
+No more redux? :D
+Apollo cache becomes single source of truth.
+  <ApolloProvider client={new ApolloClient}>
+    <App>
+  <ApolloClient />
+
+Apollo-link-http? // Observables??
+  -- local state management
+
+client is made up of cache and link
+  - both are pluggable
+  - apollo-client/apollo-boost // sets defaults if you don't want to worry too much
+
+Server-side rendering first-class-citizen
+
+import gql from 'graphql-tag'
+template literals :(
+
+const query = gql`{ movies: { id }}`
+graphql(query)(MoviesComponent) // connect???
+  ==> this.props.data = {
+    loading
+    error
+    movies
+    refetch
+    loadMore
+  }
+
