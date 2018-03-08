@@ -1,0 +1,16 @@
+Graphql is just a specification
+ql = query language :O
+
+instead of requesting specific resources we can request on a more granular level
+(down to individual fields)
+
+Apollo -> graphql-tools
+Apollo launchpad? https://launchpad.graphql.com/
+
+https://gql-workshop.kitten.sh/#/
+
+SDL - schema definition language
+
+Query type -> starting point in graph (contrived)
+
+Query: (root, args, context) {}
